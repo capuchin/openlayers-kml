@@ -1,0 +1,14 @@
+; $Id: openlayers_cck.info,v 1.3 2009/06/26 09:21:23 binarybill Exp $
+name = OpenLayers KML
+description = Provides KML 
+core = 6.x
+package = OpenLayers
+dependencies[] = openlayers
+dependencies[] = openlayers_behaviors
+dependencies[] = content
+; Information added by drupal.org packaging script on 2009-12-26
+version = "6.x-1.0-beta4"
+core = "6.x"
+project = "openlayers"
+datestamp = "1261871143"
+

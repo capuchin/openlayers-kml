@@ -1,0 +1,47 @@
+<?php
+
+/**
+ * @file
+ * This file holds the functions for the installing
+ * and enabling of the openlayers_cck module.
+ *
+ * @ingroup openlayers
+ */
+
+/**
+ * Implementation of hook_enable().
+ */
+function openlayers_kml_enable() {
+  // Let content/cck know about our actions
+  drupal_load('module', 'content');
+  content_notify('enable', 'openlayers_kml');
+}
+
+/**
+ * Implementation of hook_disable().
+ */
+function openlayers_kml_disable() {
+  // Let content/cck know about our actions
+  drupal_load('module', 'content');
+  content_notify('disable', 'openlayers_kml');
+}
+
+/**
+ * Implementation of hook_install().
+ */
+function openlayers_kml_install() {
+  // Let content/cck know about our actions
+  drupal_load('module', 'content');
+  content_notify('install', 'openlayers_kml');
+}
+
+/**
+ * Implementation of hook_uninstall().
+ */
+function openlayers_kml_uninstall() {
+  // Let content/cck know about our actions
+  drupal_load('module', 'content');
+  content_notify('uninstall', 'openlayers_kml');
+}
+
+
