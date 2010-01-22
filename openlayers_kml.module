@@ -62,7 +62,7 @@ function theme_openlayers_kml_formatter_kml_openlayers($element) {
   $map = openlayers_get_default_map();
   
   // Put together map
-  $map['id'] = 'foo';
+  $map['id'] = 'kml';
   // Make sure that our display projection matches the database projection
   $map['options']['displayProjection'] = ($field['srid'] != 0) ? $field['srid'] : '4326';
 
@@ -77,6 +77,7 @@ function theme_openlayers_kml_formatter_kml_openlayers($element) {
   // Render Map
   $rendered_map = openlayers_render_map($map);
 
+/*
   // Check errors
   if (!$rendered_map['errors']) {
     // Add JS
@@ -85,7 +86,7 @@ function theme_openlayers_kml_formatter_kml_openlayers($element) {
     drupal_add_css(drupal_get_path('module', 'openlayers_cck') .'/openlayers_cck.css', 'module');
 
     // Put together array for JS
-    $openlayers_kml_cck = array(
+    $openlayers_cck = array(
       'openlayers_kml_cck' => array(
         'maps' => array(
           $map_id => array(
@@ -105,6 +106,7 @@ function theme_openlayers_kml_formatter_kml_openlayers($element) {
     // Add JS settings
     drupal_add_js($openlayers_cck, 'setting');
   }
+*/
 
 	return $rendered_map['themed'];
 }
