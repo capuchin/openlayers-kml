@@ -59,54 +59,47 @@ function theme_openlayers_kml_formatter_kml_openlayers($element) {
 	global $base_url;
 	$kml = $base_url . '/' . $element['#item']['filepath'];
 
-  $map = openlayers_get_default_map();
-  
+	//dsm($element);
+
+	/*
+	$map = openlayers_get_default_map();
   // Put together map
   $map['id'] = 'kml';
   // Make sure that our display projection matches the database projection
   $map['options']['displayProjection'] = ($field['srid'] != 0) ? $field['srid'] : '4326';
+  */
 
-  // Define a vector layer for our features
+	// TODO have formatter for each preset
+	$preset = openlayers_get_preset('new');
+	$map = $preset['preset_data'];
+
+  //$map['controls']['SelectFeature'] = array('kml_example');
+
+  // Adds KML Layer
 	$map['layers']['kml_example'] = array(
 		'id' => 'openlayers_kml_cck',
 		'type' => 'KML',
 		'name' => t('KML Overlay'),
 		'url' => $kml,
-		'options' => array(),
+	);
+
+  // Adds fullscreen button
+	$map['behaviors'] = array(
+		'fullscreen' => array(
+		  'id' => 'fullscreen',
+		  'type' => 'openlayers_behaviors_fullscreen',
+		  'layer' => 'kml_example',
+		),
+		// Use the 'name' attrib from the KML file as tooltip
+		'openlayers_views_tooltip_id' => array(
+				'id' => 'openlayers_views_tooltip_id',
+				'type' => 'openlayers_behaviors_tooltip',
+				'layer' => 'kml_example',
+				//'attribute' => 'Description', // could use description instead 
+			),
 	);
   // Render Map
   $rendered_map = openlayers_render_map($map);
-
-/*
-  // Check errors
-  if (!$rendered_map['errors']) {
-    // Add JS
-    drupal_add_js(drupal_get_path('module', 'openlayers_cck') .'/js/openlayers_cck.js');
-    //Add CSS
-    drupal_add_css(drupal_get_path('module', 'openlayers_cck') .'/openlayers_cck.css', 'module');
-
-    // Put together array for JS
-    $openlayers_cck = array(
-      'openlayers_kml_cck' => array(
-        'maps' => array(
-          $map_id => array(
-            'field_name' => $field_name,
-            'field_data' => $field,
-            'field_name_js' => $field_name_html,
-            'field_container' => $field_container,
-            'field_items' => $items,
-            'field_id' => $field_id,
-            'hidden_field_id' => $hidden_field_id,
-            'map_container' => 'openlayers-cck-map-container-' . $map_id,
-          ),
-        ),
-      ),
-    );
-
-    // Add JS settings
-    drupal_add_js($openlayers_cck, 'setting');
-  }
-*/
 
 	return $rendered_map['themed'];
 }
