@@ -4,12 +4,16 @@
 * Implementation of hook_theme().
 */
 function openlayers_kml_theme() {
-  return array(
-    // Themes for the formatters.
-    'openlayers_kml_formatter_kml_openlayers' => array(
+
+  // Create formatter theme functions
+  foreach (openlayers_get_presets() as $name => $title) {
+    $themes['openlayers_kml_formatter_openlayers_map_' . $name] = array(
       'arguments' => array('element' => NULL),
-    ),
-  );
+      'function' => 'theme_openlayers_kml_formatter_kml_openlayers',
+    );
+  }
+
+  return $themes;
 }
  
 /**
@@ -22,84 +26,62 @@ function openlayers_kml_theme() {
 *
 */
 function openlayers_kml_field_formatter_info() {
-  return array(
-    // The machine name of the formatter.
-    'kml_openlayers' => array(
-      // The human-readable label shown on the Display
-      // fields screen.
-      'label' => t('KML OpenLayers Map'),
-      // An array of the field types this formatter
-      // can be used on.
+
+  $formatters = array();
+
+  // Map preset formatter
+  foreach (openlayers_get_presets() as $name => $title) {
+    $formatters['openlayers_map_' . $name] = array(
+      'label' => t('OpenLayers Map: @preset', array('@preset' => check_plain($title))),
       'field types' => array('filefield'),
-      // CONTENT_HANDLE_CORE:   CCK will pass the formatter
-      // a single value.
-      // CONTENT_HANDLE_MODULE: CCK will pass the formatter
-      // an array of all the values. None of CCK's core
-      // formatters use multiple values, that is an option
-      // available to other modules that want it.
       'multiple values' => CONTENT_HANDLE_CORE,
-    ),
-  );
+    );
+  }
+  return $formatters;
 }
- 
- 
+
 /**
-* Theme function for 'default' example field formatter.
-*
-* $element['#item']: the sanitized $delta value for the item,
-* $element['#field_name']: the field name,
-* $element['#type_name']: the $node->type,
-* $element['#formatter']: the $formatter_name,
-* $element'#node']: the $node,
-* $element['#delta']: the delta of this item, like '0',
-*
-*/
+ * Theme function for openlayers_kml element
+ */
 function theme_openlayers_kml_formatter_kml_openlayers($element) {
   // In here, find the KML field, make your map array, and render
-	global $base_url;
-	$kml = $base_url . '/' . $element['#item']['filepath'];
+  global $base_url;
+  $kml = $base_url . '/' . $element['#item']['filepath'];
 
-	//dsm($element);
+dsm($element['#formatter']);
 
-	/*
-	$map = openlayers_get_default_map();
-  // Put together map
-  $map['id'] = 'kml';
-  // Make sure that our display projection matches the database projection
-  $map['options']['displayProjection'] = ($field['srid'] != 0) ? $field['srid'] : '4326';
-  */
+  // Get the preset that was chosen in display fields
+  if (substr($element['#formatter'], 25) == 'openlayers_kml_formatter_') $preset_name = substr($element['#formatter'], 25);
+  if (substr($element['#formatter'], 0, 15) == 'openlayers_map_') $preset_name = substr($element['#formatter'], 15);
 
-	// TODO have formatter for each preset
-	$preset = openlayers_get_preset('new');
-	$map = $preset['preset_data'];
-
-  //$map['controls']['SelectFeature'] = array('kml_example');
+  $preset = openlayers_get_preset($preset_name);
+  $map = $preset['preset_data'];
 
   // Adds KML Layer
-	$map['layers']['kml_example'] = array(
-		'id' => 'openlayers_kml_cck',
-		'type' => 'KML',
-		'name' => t('KML Overlay'),
-		'url' => $kml,
-	);
+  $map['layers']['kml_example'] = array(
+    'id' => 'openlayers_kml_cck',
+    'type' => 'KML',
+    'name' => t('KML Overlay'),
+    'url' => $kml,
+  );
 
   // Adds fullscreen button
-	$map['behaviors'] = array(
-		'fullscreen' => array(
-		  'id' => 'fullscreen',
-		  'type' => 'openlayers_behaviors_fullscreen',
-		  'layer' => 'kml_example',
-		),
-		// Use the 'name' attrib from the KML file as tooltip
-		'openlayers_views_tooltip_id' => array(
-				'id' => 'openlayers_views_tooltip_id',
-				'type' => 'openlayers_behaviors_tooltip',
-				'layer' => 'kml_example',
-				//'attribute' => 'Description', // could use description instead 
-			),
-	);
+  $map['behaviors'] = array(
+    'fullscreen' => array(
+      'id' => 'fullscreen',
+      'type' => 'openlayers_behaviors_fullscreen',
+      'layer' => 'kml_example',
+    ),
+    // Use the 'name' attrib from the KML file as tooltip
+    'openlayers_views_tooltip_id' => array(
+        'id' => 'openlayers_views_tooltip_id',
+        'type' => 'openlayers_behaviors_tooltip',
+        'layer' => 'kml_example',
+        //'attribute' => 'Description', // could use description instead 
+      ),
+  );
   // Render Map
   $rendered_map = openlayers_render_map($map);
 
-	return $rendered_map['themed'];
+  return $rendered_map['themed'];
 }
