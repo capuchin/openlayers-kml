@@ -48,8 +48,6 @@ function theme_openlayers_kml_formatter_kml_openlayers($element) {
   global $base_url;
   $kml = $base_url . '/' . $element['#item']['filepath'];
 
-dsm($element['#formatter']);
-
   // Get the preset that was chosen in display fields
   if (substr($element['#formatter'], 25) == 'openlayers_kml_formatter_') $preset_name = substr($element['#formatter'], 25);
   if (substr($element['#formatter'], 0, 15) == 'openlayers_map_') $preset_name = substr($element['#formatter'], 15);
