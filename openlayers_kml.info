@@ -4,8 +4,8 @@ description = Provides KML
 core = 6.x
 package = OpenLayers
 dependencies[] = openlayers
-dependencies[] = openlayers_behaviors
 dependencies[] = content
+dependencies[] = filefield
 ; Information added by drupal.org packaging script on 2009-12-26
 version = "6.x-1.0-beta4"
 core = "6.x"
