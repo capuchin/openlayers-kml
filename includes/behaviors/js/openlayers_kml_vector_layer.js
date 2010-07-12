@@ -1,3 +1,4 @@
+// $Id$
 
 /**
  * @file
@@ -7,13 +8,9 @@
  */
 Drupal.behaviors.openlayers_kml_vector_layer = function(context) {
 
-//console.log("hi");
-
   var data = $(context).data('openlayers');
   if (data && data.map.behaviors['openlayers_kml_vector_layer']) {
     var features = data.map.behaviors['openlayers_kml_vector_layer'].features;
-
-
 
     // Create options and layer
     var options = {
@@ -30,9 +27,6 @@ Drupal.behaviors.openlayers_kml_vector_layer = function(context) {
 		 projection: "EPSG:" + features[0].projection
 		});
 
-
 		data.openlayers.addLayer(layer);
-
-
   }
 };

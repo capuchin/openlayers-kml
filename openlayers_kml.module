@@ -1,4 +1,5 @@
 <?php
+// $Id$
 
 /**
  * Implementation of hook_openlayers_behaviors
@@ -72,7 +73,9 @@ function openlayers_kml_field_formatter_info() {
   return $formatters;
 }
 
-// TODO this is not getting called when formatters other than 'default' are used
+/**
+ * Theme function for openlayers kml formatters
+ */
 function theme_openlayers_kml_formatter_map($element) {
 
   // Get the url of the KML file
@@ -92,13 +95,9 @@ function theme_openlayers_kml_formatter_map($element) {
     );
   }
 
-  if (drupal_substr($element['#formatter'], 25) == 'openlayers_kml_formatter_') {
-    $preset_name = drupal_substr($element['#formatter'], 25);
-  }
-  elseif (drupal_substr($element['#formatter'], 0, 15) == 'openlayers_map_') {
-    $preset_name = drupal_substr($element['#formatter'], 15);
-  }
-  else {
+ if (drupal_substr($element['#formatter'], 0, 4) == 'map_') {
+    $preset_name = drupal_substr($element['#formatter'], 4);
+  }   else {
     $preset_name = variable_get('openlayers_default_preset', 'default');
   }
 
