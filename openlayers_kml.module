@@ -1,6 +1,5 @@
 <?php
 
-
 /**
  * Implementation of hook_openlayers_behaviors
  */
@@ -22,26 +21,23 @@ function openlayers_kml_openlayers_behaviors() {
    );
 }
 
-
 /**
-* Implementation of hook_theme().
-*/
+ * Implementation of hook_theme().
+ */
 function openlayers_kml_theme() {
-/*
-  // Create formatter theme functions
-  foreach (openlayers_get_presets() as $name => $title) {
-    $themes['openlayers_kml_formatter_openlayers_map_' . $name] = array(
-      'arguments' => array('element' => NULL),
-      'function' => 'theme_openlayers_kml_formatter_kml_openlayers',
-    );
-  }
-*/
   $themes = array(
     'openlayers_kml_formatter_default' => array(
       'arguments' => array('element' => NULL),
       'function' => 'theme_openlayers_kml_formatter_map',
     ),
   );
+  // Create formatter theme functions
+  foreach (openlayers_preset_options() as $name => $title) {
+    $themes['openlayers_kml_formatter_map_' . $name] = array(
+      'arguments' => array('element' => NULL),
+      'function' => 'theme_openlayers_kml_formatter_map',
+    );
+  }
 
   return $themes;
 }
@@ -56,58 +52,34 @@ function openlayers_kml_theme() {
 *
 */
 function openlayers_kml_field_formatter_info() {
-/*
-  $formatters = array();
-
-  // Map preset formatter
-  foreach (openlayers_get_presets() as $name => $title) {
-    $formatters['openlayers_map_' . $name] = array(
-      'label' => t('OpenLayers Map: @preset', array('@preset' => check_plain($title))),
-      'field types' => array('filefield'),
-      'multiple values' => CONTENT_HANDLE_CORE,
-    );
-  }
-  return $formatters;
-*/
 
   $formatters = array();
-
   // Default formatter
   $formatters['default'] = array(
     'label' => t('Default Map'),
     'field types' => array('filefield'),
-    'multiple values' => CONTENT_HANDLE_MODULE,
+    'multiple values' => CONTENT_HANDLE_MULTIPLE,
   );
- /* 
-  // WKT value
-  $formatters['openlayers_wkt'] = array(
-    'label' => t('WKT Value'),
-    'field types' => array('filefield'),
-    'multiple values' => CONTENT_HANDLE_MODULE,
-  );
-*/
-/*
   // Map preset formatter
   foreach (openlayers_preset_options() as $name => $title) {
-    $formatters['openlayers_map_' . $name] = array(
+    $formatters['map_' . $name] = array(
       'label' => t('OpenLayers Map: @preset', 
         array('@preset' => check_plain($title))),
-      'field types' => array('openlayers_filefield'),
-      'multiple values' => CONTENT_HANDLE_MODULE,
+      'field types' => array('filefield'),
+      'multiple values' => CONTENT_HANDLE_MULTIPLE,
     );
   }
-*/
   return $formatters;
 }
 
-// NEW 2.x
+// TODO this is not getting called when formatters other than 'default' are used
 function theme_openlayers_kml_formatter_map($element) {
+
   // Get the url of the KML file
   global $base_url;
   $kml = $base_url . '/' . $element[0]['#item']['filepath']; // TODO handle multiple files
 
-// copied from theme_openlayers_cck_formatter_map
-
+  // copied from theme_openlayers_cck_formatter_map
   $features = array();
   $field = content_fields($element['#field_name'], $element['#type_name']);
   $widget = $field['widget'];
@@ -115,34 +87,20 @@ function theme_openlayers_kml_formatter_map($element) {
   // Create array of $features
   foreach (element_children($element) as $delta) {
     $features[] = array(
-      // First look for geo_field data, then for openlayers wkt data
-/*
-      'wkt' => $element[$delta]['#item']['openlayers_wkt'],
-      'projection' => '4326',
-*/
       'kml' => $kml,
       'projection' => '4326',
-
     );
   }
 
-
-  // Get preset name from formatter. Strip off 'openlayers_cck_formatter_'
-  // and 'openlayers_map_' from the beginning.
-  // If none found, use default map.
-  // TODO: Better way to do this?
-/*
-  if (drupal_substr($element['#formatter'], 25) == 'openlayers_cck_formatter_') {
+  if (drupal_substr($element['#formatter'], 25) == 'openlayers_kml_formatter_') {
     $preset_name = drupal_substr($element['#formatter'], 25);
   }
   elseif (drupal_substr($element['#formatter'], 0, 15) == 'openlayers_map_') {
     $preset_name = drupal_substr($element['#formatter'], 15);
   }
   else {
-*/
-// Just use default preset for now...
     $preset_name = variable_get('openlayers_default_preset', 'default');
-  //}
+  }
 
   // Get map preset
   $preset = openlayers_preset_load($preset_name);
@@ -162,7 +120,5 @@ function theme_openlayers_kml_formatter_map($element) {
 
   // Render map
   return openlayers_render_map($preset->data, $preset->name);
-
-///
 }
 
